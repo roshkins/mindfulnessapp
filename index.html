@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Meditation App</title>
+  <script async defer>
+  var state = {
+  duration: 1,
+  hasMoved: true,
+  movedAt: null,
+  button: null
+};
+
+function log(text) {
+  var newLog = document.createElement("li");
+  newLog.innerHTML = text;
+
+  document.querySelector("#scorelist").appendChild(newLog);
+}
+
+function buttonClicked() {
+  if (!state.button) state.button = document.querySelector("#button");
+  if (state.started) {
+    const clickDuration = Math.abs(
+      (Date.now() - state.movedAt) / 1000 - state.duration
+    );
+
+    state.hasMoved = false;
+    //Only allow you to progress if you clicked within a second and a tenth of the duration
+    var durationText = `At ${Date(
+      state.movedAt
+    )} you clicked within ${clickDuration.toFixed(
+      3
+    )} seconds of your duration, with an error of ${(
+      clickDuration / state.duration
+    ).toFixed(3)}. `;
+    if (clickDuration < state.duration * 0.1 + 1) {
+      log(durationText + "You got it! Adding 10 seconds to your goal.");
+      state.duration += 10;
+    } else {
+      log(
+        durationText +
+          "Try again, really focus on keeping your mind on one thing only, and that is counting."
+      );
+    }
+  } else state.started = true;
+  state.button.innerText = `Click this button after ${
+    state.duration
+  } seconds since the last click`;
+
+  state.movedAt = Date.now();
+  setTimeout(moveButton, state.duration * 1000);
+}
+
+function moveButton() {
+  state.hasMoved = true;
+}
+</script>
+</head>
+
+<body>
+  <h1> Competitive attention spanning</h1>
+  <h2>How long can you go without getting lost in your thoughts? </h2>
+  <h3>Keep your trains of thought running</h3>
+  <p> Your goal is to notice when a duration has elapsed and click the button as soon as possible afterwards, without clicking too soon or late. Click the button once to begin, the duration increases by a second each round you get it within a 10% + 1 second
+    of the duration. Notice what techniques you used. You can also practice with distractions, like playing music or having tax documents up. What worked? What's your high score? What's your longest streak without making a mistake?:
+    <h2>Common durations</h2>
+    <ul>
+      <li>1 second</li>
+      <li>10 seconds</li>
+      <li>60 seconds or 1 minute</li>
+      <li> 300 seconds or 5 minutes </li>
+      <li> 600 seconds or 10 minutes </li>
+      <li> 1200 seconds or 20 minutes </li>
+      <li> 1800 seconds or 30 minutes </li>
+      <li> 3600 seconds or 1 hour</li>
+    </ul>
+  </p>
+  <label for="startingDuration">Start at </label><input onchange="state.duration = Number(this.value);" type="number" min="1" value="1" /> <span> seconds </span><br/>
+
+  <button id="button" onclick="buttonClicked(); return false;" style="font-size:30pt">Start</button>
+  <ol id="scorelist"></ol>
+</body>
+
+</html>
